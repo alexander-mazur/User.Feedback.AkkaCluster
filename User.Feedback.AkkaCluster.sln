@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Feedback.Central", "Us
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Feedback.Common", "User.Feedback.Common\User.Feedback.Common.csproj", "{5CD4037E-E5FD-4958-9016-35C06B3E5443}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "User.Feedback.Discovery", "User.Feedback.Discovery\User.Feedback.Discovery.csproj", "{A05F8321-822D-478C-BE71-6ADC9B4CE9AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5CD4037E-E5FD-4958-9016-35C06B3E5443}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CD4037E-E5FD-4958-9016-35C06B3E5443}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CD4037E-E5FD-4958-9016-35C06B3E5443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A05F8321-822D-478C-BE71-6ADC9B4CE9AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A05F8321-822D-478C-BE71-6ADC9B4CE9AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A05F8321-822D-478C-BE71-6ADC9B4CE9AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A05F8321-822D-478C-BE71-6ADC9B4CE9AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
