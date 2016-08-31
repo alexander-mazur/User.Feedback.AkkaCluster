@@ -3,7 +3,7 @@ using Akka.Actor;
 using User.Feedback.Common;
 using User.Feedback.Common.Messages;
 
-namespace User.Feedback.Central.Actors
+namespace User.Feedback.Persistence.Actors
 {
     public class UserFeedbackPersistenceActor : ReceiveActor
     {

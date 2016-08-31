@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Configuration;
 using Akka.Actor;
 
 namespace User.Feedback.Central.Actors
@@ -17,9 +18,9 @@ namespace User.Feedback.Central.Actors
         {
             ActorSystem = ActorSystem.Create("User-Feedback-Central");
 
-            var persistenceActor = ActorSystem.ActorOf(Props.Create(() => new UserFeedbackPersistenceActor()), "UserFeedbackPersistence");
+            var remotePersistenceActor = ActorSystem.ActorSelection(ConfigurationManager.AppSettings["UserFeedbackPersistenceActor"]);
 
-            ActorSystem.ActorOf(Props.Create(() => new UserFeedbackProcessorActor(persistenceActor)), "UserFeedbackReceiver");
+            ActorSystem.ActorOf(Props.Create(() => new UserFeedbackProcessorActor(remotePersistenceActor)), "UserFeedbackProcessor");
         }
 
         public void Dispose()

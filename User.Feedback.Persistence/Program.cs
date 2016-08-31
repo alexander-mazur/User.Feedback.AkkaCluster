@@ -1,16 +1,16 @@
 ﻿using System;
-using Akka.Actor;
-using User.Feedback.Central.Actors;
 
-namespace User.Feedback.Central
+using User.Feedback.Persistence.Actors;
+
+namespace User.Feedback.Persistence
 {
     class Program
     {
         static void Main(string[] args)
         {
-            using (new CentralActorSystem())
+            using (new PersistenceActorSystem())
             {
-                Console.WriteLine("User.Feedback Central Application started.");
+                Console.WriteLine("User.Feedback Persistence Application started.");
                 Console.WriteLine("Press ENTER to exit...");
                 Console.ReadLine();
             }

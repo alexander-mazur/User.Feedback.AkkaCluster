@@ -13,7 +13,8 @@ namespace User.Feedback.Client.BusinessObjects
 {
     public class UserFeedbackManager : IUserFeedbackManager
     {
-        private readonly ActorSelection _userFeedbackRemoteActor;
+        private readonly ActorSelection _remoteProcessorActor;
+        private readonly ActorSelection _remotePersistenceActor;
         private readonly IActorRef _userFeedbackUpdateActor;
 
         private readonly Stopwatch _stopwatch;
@@ -21,7 +22,8 @@ namespace User.Feedback.Client.BusinessObjects
 
         public UserFeedbackManager(ActorSystem actorSystem)
         {
-            _userFeedbackRemoteActor = actorSystem.ActorSelection(ConfigurationManager.AppSettings["UserFeedbackReceiver"]);
+            _remoteProcessorActor = actorSystem.ActorSelection(ConfigurationManager.AppSettings["UserFeedbackProcessorActor"]);
+            _remotePersistenceActor = actorSystem.ActorSelection(ConfigurationManager.AppSettings["UserFeedbackPersistenceActor"]);
             _userFeedbackUpdateActor = actorSystem.ActorOf(Props.Create(() => new UserFeedbackUpdateActor(this)), "UserFeedbackUpdate");
 
             _stopwatch = new Stopwatch();
@@ -29,7 +31,7 @@ namespace User.Feedback.Client.BusinessObjects
 
         public void TellUserFeedback(UserFeedback userFeedback)
         {
-            _userFeedbackRemoteActor.Tell(new TellUserFeedbackMessage(userFeedback));
+            _remoteProcessorActor.Tell(new TellUserFeedbackMessage(userFeedback));
         }
 
         public void TellBatchOfUserFeedbacks(UserFeedback userFeedback, int count)
@@ -52,17 +54,17 @@ namespace User.Feedback.Client.BusinessObjects
 
         public Task<ReplyUserFeedbacksMessage> AskUserFeedbackCollection()
         {
-            return _userFeedbackRemoteActor.Ask<ReplyUserFeedbacksMessage>(new RequestUserFeedbacksMessage());
+            return _remotePersistenceActor.Ask<ReplyUserFeedbacksMessage>(new RequestUserFeedbacksMessage());
         }
 
         public void SubscribeToUserFeedbackUpdates()
         {
-            _userFeedbackRemoteActor.Tell(new SubscribeToUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
+            _remoteProcessorActor.Tell(new SubscribeToUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
         }
 
         public void UnsubscribeFromUserFeedbackUpdates()
         {
-            _userFeedbackRemoteActor.Tell(new UnsubscribeFromUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
+            _remoteProcessorActor.Tell(new UnsubscribeFromUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
         }
 
         public void RaiseUserFeedbackUpdate(UserFeedback userFeedback)
