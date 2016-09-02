@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Akka.Actor;
-
+using Akka.Routing;
 using User.Feedback.Client.Actors;
 using User.Feedback.Common;
 using User.Feedback.Common.Messages;
@@ -13,7 +13,9 @@ namespace User.Feedback.Client.BusinessObjects
 {
     public class UserFeedbackManager : IUserFeedbackManager
     {
-        private readonly ActorSelection _remoteProcessorActor;
+        private readonly IActorRef _remoteProcessorActor;
+        private readonly IActorRef _remoteSubscriberActor;
+
         private readonly ActorSelection _remotePersistenceActor;
         private readonly IActorRef _userFeedbackUpdateActor;
 
@@ -22,7 +24,9 @@ namespace User.Feedback.Client.BusinessObjects
 
         public UserFeedbackManager(ActorSystem actorSystem)
         {
-            _remoteProcessorActor = actorSystem.ActorSelection(ConfigurationManager.AppSettings["UserFeedbackProcessorActor"]);
+            _remoteProcessorActor = actorSystem.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "processor");
+            _remoteSubscriberActor = actorSystem.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "subscriber");
+
             _remotePersistenceActor = actorSystem.ActorSelection(ConfigurationManager.AppSettings["UserFeedbackPersistenceActor"]);
             _userFeedbackUpdateActor = actorSystem.ActorOf(Props.Create(() => new UserFeedbackUpdateActor(this)), "UserFeedbackUpdate");
 
@@ -59,12 +63,12 @@ namespace User.Feedback.Client.BusinessObjects
 
         public void SubscribeToUserFeedbackUpdates()
         {
-            _remoteProcessorActor.Tell(new SubscribeToUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
+            _remoteSubscriberActor.Tell(new SubscribeToUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
         }
 
         public void UnsubscribeFromUserFeedbackUpdates()
         {
-            _remoteProcessorActor.Tell(new UnsubscribeFromUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
+            _remoteSubscriberActor.Tell(new UnsubscribeFromUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
         }
 
         public void RaiseUserFeedbackUpdate(UserFeedback userFeedback)
