@@ -1,22 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using Akka.Actor;
+using Akka.Cluster;
+using Akka.Cluster.Tools.PublishSubscribe;
+
+using User.Feedback.Common;
 using User.Feedback.Common.Messages;
 
 namespace User.Feedback.Central.Actors
 {
     public class UserFeedbackProcessorActor : ReceiveActor
     {
+        public readonly IActorRef Mediator = DistributedPubSub.Get(Context.System).Mediator;
+
         private readonly ActorSelection _remotePersistenceActor;
-        private readonly IList<IActorRef> _subscribers = new List<IActorRef>();
 
         public UserFeedbackProcessorActor(ActorSelection remotePersistenceActor)
         {
             _remotePersistenceActor = remotePersistenceActor;
 
             Receive<TellUserFeedbackMessage>(tellUserFeedback => ProcessTellUserFeedbackMessage(tellUserFeedback));
-
-            Receive<SubscribeToUserFeedbackUpdateMessage>(subscription => ProcessSubscriptionMessage(subscription));
-
             Receive<UserFeedbackUpdateMessage>(userFeedbackUpdate => ProcessUserFeedbackUpdateMessage(userFeedbackUpdate));
         }
 
@@ -25,20 +27,11 @@ namespace User.Feedback.Central.Actors
             _remotePersistenceActor.Tell(tellUserFeedbackMessage);
         }
 
-        private void ProcessSubscriptionMessage(SubscribeToUserFeedbackUpdateMessage subscription)
-        {
-            if (!_subscribers.Contains(subscription.Subscriber))
-            {
-                _subscribers.Add(subscription.Subscriber);
-            }
-        }
-
         private void ProcessUserFeedbackUpdateMessage(UserFeedbackUpdateMessage userFeedbackUpdate)
         {
-            foreach (var subscriber in _subscribers)
-            {
-                subscriber.Tell(userFeedbackUpdate);
-            }
+            Console.WriteLine($"Processed message: {userFeedbackUpdate.UserFeedback.Message}");
+
+            Mediator.Tell(new Publish(Metadata.UserFeedback.Topic, userFeedbackUpdate));
         }
     }
 }

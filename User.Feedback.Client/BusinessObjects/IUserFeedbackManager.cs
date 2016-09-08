@@ -13,10 +13,6 @@ namespace User.Feedback.Client.BusinessObjects
 
         Task<ReplyUserFeedbacksMessage> AskUserFeedbackCollection();
 
-        void SubscribeToUserFeedbackUpdates();
-
-        void UnsubscribeFromUserFeedbackUpdates();
-
         void RaiseUserFeedbackUpdate(UserFeedback userFeedback);
 
         event EventHandler<UserFeedback> UserFeedbackUpdated;

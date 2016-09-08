@@ -1,6 +1,6 @@
-﻿
-using System;
+﻿using System;
 using System.Configuration;
+
 using Akka.Actor;
 
 namespace User.Feedback.Central.Actors
@@ -16,7 +16,7 @@ namespace User.Feedback.Central.Actors
 
         private void Initialize()
         {
-            ActorSystem = ActorSystem.Create("User-Feedback-Central");
+            ActorSystem = ActorSystem.Create("User-Feedback-Cluster");
 
             var remotePersistenceActor = ActorSystem.ActorSelection(ConfigurationManager.AppSettings["UserFeedbackPersistenceActor"]);
 

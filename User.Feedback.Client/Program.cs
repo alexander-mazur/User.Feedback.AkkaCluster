@@ -14,7 +14,7 @@ namespace User.Feedback.Client
         [STAThread]
         static void Main()
         {
-            using (var userFeedbackClientActorSystem = ClientActorSystem.Instance)
+            using (ClientActorSystem.Instance)
             {
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);

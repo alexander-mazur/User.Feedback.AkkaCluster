@@ -19,7 +19,6 @@ namespace User.Feedback.Client.Views.ViewMessages
             View.MessagesRequested += OnMessagesRequested;
 
             UserFeedbackManager.UserFeedbackUpdated += OnUserFeedbackUpdated;
-            UserFeedbackManager.SubscribeToUserFeedbackUpdates();
         }
 
         private void OnMessagesRequested(object sender, EventArgs e)

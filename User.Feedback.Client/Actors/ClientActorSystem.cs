@@ -22,7 +22,7 @@ namespace User.Feedback.Client.Actors
 
         private void Initialize()
         {
-            ActorSystem = ActorSystem.Create("User-Feedback-Central"); ;
+            ActorSystem = ActorSystem.Create("User-Feedback-Cluster"); ;
 
             UserFeedbackManager = new UserFeedbackManager(ActorSystem);
         }

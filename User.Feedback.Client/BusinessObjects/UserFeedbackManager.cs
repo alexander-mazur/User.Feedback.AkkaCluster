@@ -14,10 +14,7 @@ namespace User.Feedback.Client.BusinessObjects
     public class UserFeedbackManager : IUserFeedbackManager
     {
         private readonly IActorRef _remoteProcessorActor;
-        private readonly IActorRef _remoteSubscriberActor;
-
         private readonly ActorSelection _remotePersistenceActor;
-        private readonly IActorRef _userFeedbackUpdateActor;
 
         private readonly Stopwatch _stopwatch;
         private string _lastUserFeedbackMessage = string.Empty;
@@ -25,10 +22,9 @@ namespace User.Feedback.Client.BusinessObjects
         public UserFeedbackManager(ActorSystem actorSystem)
         {
             _remoteProcessorActor = actorSystem.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "processor");
-            _remoteSubscriberActor = actorSystem.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "subscriber");
-
             _remotePersistenceActor = actorSystem.ActorSelection(ConfigurationManager.AppSettings["UserFeedbackPersistenceActor"]);
-            _userFeedbackUpdateActor = actorSystem.ActorOf(Props.Create(() => new UserFeedbackUpdateActor(this)), "UserFeedbackUpdate");
+
+            actorSystem.ActorOf(Props.Create(() => new UserFeedbackUpdateActor(this)), "UserFeedbackUpdate");
 
             _stopwatch = new Stopwatch();
         }
@@ -59,16 +55,6 @@ namespace User.Feedback.Client.BusinessObjects
         public Task<ReplyUserFeedbacksMessage> AskUserFeedbackCollection()
         {
             return _remotePersistenceActor.Ask<ReplyUserFeedbacksMessage>(new RequestUserFeedbacksMessage());
-        }
-
-        public void SubscribeToUserFeedbackUpdates()
-        {
-            _remoteSubscriberActor.Tell(new SubscribeToUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
-        }
-
-        public void UnsubscribeFromUserFeedbackUpdates()
-        {
-            _remoteSubscriberActor.Tell(new UnsubscribeFromUserFeedbackUpdateMessage(_userFeedbackUpdateActor));
         }
 
         public void RaiseUserFeedbackUpdate(UserFeedback userFeedback)
