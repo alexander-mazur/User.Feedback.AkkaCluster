@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Akka.Actor;
 using User.Feedback.Common;
 using User.Feedback.Common.Messages;
@@ -13,6 +15,8 @@ namespace User.Feedback.Persistence.Actors
         {
             Receive<TellUserFeedbackMessage>(tellUserFeedback =>
             {
+                Console.WriteLine($"Save message in the persistance storage: {tellUserFeedback.UserFeedback.Message}; total count: {_userFeedbacks.Count}");
+
                 _userFeedbacks.Add(tellUserFeedback.UserFeedback);
                 Sender.Tell(new UserFeedbackUpdateMessage(
                     new UserFeedback(tellUserFeedback.UserFeedback.Message + "*", tellUserFeedback.UserFeedback.Created)));

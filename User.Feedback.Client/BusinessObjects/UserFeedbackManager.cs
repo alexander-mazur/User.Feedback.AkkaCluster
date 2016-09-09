@@ -59,14 +59,14 @@ namespace User.Feedback.Client.BusinessObjects
 
         public void RaiseUserFeedbackUpdate(UserFeedback userFeedback)
         {
-            UserFeedbackUpdated?.Invoke(this, userFeedback);
-
             if (_stopwatch.IsRunning && userFeedback.Message.StartsWith(_lastUserFeedbackMessage))
             {
                 _stopwatch.Stop();
 
                 MessageBox.Show($"The process time of batch messages is {_stopwatch.ElapsedMilliseconds} ms.");
             }
+
+            UserFeedbackUpdated?.Invoke(this, userFeedback);
         }
 
         public event EventHandler<UserFeedback> UserFeedbackUpdated;
